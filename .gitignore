@@ -1,0 +1,10 @@
+# IDE
+.vs/
+.vscode/
+bin*/
+obj/
+Output/
+packages/
+*.user
+#Other
+Libs/
