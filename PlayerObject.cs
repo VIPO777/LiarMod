@@ -48,8 +48,6 @@ namespace LiarMod.Player
             var scene = SceneManager.GetActiveScene();
             CustomNetworkManager net = NetworkManager.singleton as CustomNetworkManager;
 
-            MelonLogger.Warning("cache_LocalGamePlayer SCENE: " + scene.name);
-
             switch (scene.name)
             {
                 case "SteamLobby":
