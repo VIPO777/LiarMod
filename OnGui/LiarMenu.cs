@@ -101,7 +101,7 @@ namespace LiarMod.OnGui
                     case CustomNetworkManager.GameMode.LiarsDeck:
                         NewToggleButton("FreeCountDown", ref FreeCountDown);
                         NewToggleButton("FreeTurn", ref FreeLiarsDeckTurn);
-
+                        NewToggleButton("FreeThrowCard", ref FreeThrowCard);
 #if DEBUG
                         NewToggleButton("ShowLiarsDeckCards [Don't fucking use]", ref ShowLiarsDeckCards);
 
@@ -215,7 +215,6 @@ namespace LiarMod.OnGui
             }
 
             NewToggleButton("FreeButtonActive", ref FreeButtonActive);
-            NewToggleButton("FreeThrowCard", ref FreeThrowCard);
 
             //  NewToggleButton("LargeLobby", ref LargeLobby);
         }
