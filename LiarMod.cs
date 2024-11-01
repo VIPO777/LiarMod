@@ -8,11 +8,11 @@ namespace LiarMod
     public static class BuildInfo
     {
         public const string Name = "LiarMod";
-        public const string Description = "MirrorNetworking RPCFun";
+        public const string Description = "Fun functions for the Liar's Bar";
         public const string Author = "VIPO777";
         public const string Company = null;
         public const string Version = "1.0.0";
-        public const string DownloadLink = null;
+        public const string DownloadLink = "https://github.com/VIPO777/LiarMod/releases";
     }
 
     public class LiarMod : MelonMod
