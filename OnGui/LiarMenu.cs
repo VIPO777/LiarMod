@@ -90,6 +90,8 @@ namespace LiarMod.OnGui
         {
             CustomNetworkManager net = NetworkManager.singleton as CustomNetworkManager;
 
+            GUIMenu.scrollFunctions = GUILayout.BeginScrollView(GUIMenu.scrollFunctions, GUILayout.Width(GUIMenu.MainWindowRect.width));
+
             NewToggleButton("Bitches GUI", ref BitchesGuiToggle);
             NewToggleButton("FreePos", ref freePlayerPosToggle);
             NewToggleButton("FreeNetObjPos", ref freeNetObjPosToggle);
@@ -215,6 +217,8 @@ namespace LiarMod.OnGui
             }
 
             NewToggleButton("FreeButtonActive", ref FreeButtonActive);
+
+            GUILayout.EndScrollView();
 
             //  NewToggleButton("LargeLobby", ref LargeLobby);
         }
