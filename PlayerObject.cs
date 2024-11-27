@@ -4,6 +4,7 @@ using MelonLoader;
 using Mirror;
 using System;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,6 +12,8 @@ namespace LiarMod.Player
 {
     public static class PlayerObject
     {
+        public enum CharControllerTransform { CharController, HeadPivot }
+
         public static bool freepos
         {
             get { return using_freepos; }
@@ -43,26 +46,30 @@ namespace LiarMod.Player
             }
         }
 
+
         private static bool cache_LocalGamePlayer()
         {
             var scene = SceneManager.GetActiveScene();
             CustomNetworkManager net = NetworkManager.singleton as CustomNetworkManager;
 
-            switch (scene.name)
+            if(scene.name == "SteamLobby")
             {
-                case "SteamLobby":
-                    GameObject foundObject = GameObject.FindObjectsOfType<GameObject>()
+                GameObject foundObject = GameObject.FindObjectsOfType<GameObject>()
                         .FirstOrDefault(obj => obj.name.Contains("LocalGamePlayer"));
 
-                    if (foundObject == null)
-                    {
-                        MelonLogger.Error("no LocalGamePlayer found");
-                        return false;
-                    }
-                    TransformObject = foundObject.transform;
-                    break;
+                if (foundObject == null)
+                {
+                    MelonLogger.Error("no LocalGamePlayer found");
+                    return false;
+                }
+                TransformObject = foundObject.transform;
+                return true;
+            }
 
-                case "Game":
+            if (Manager.Instance != null)
+            {
+                if (Manager.Instance.GameStarted)
+                {
                     LocalPlayerController = net.GamePlayers.FirstOrDefault(player => player.isLocalPlayer);
 
                     if (LocalPlayerController != null && CharController == null)
@@ -76,17 +83,25 @@ namespace LiarMod.Player
                         return false;
                     }
 
-                    TransformObject = CharController.transform;
-                    break;
+                    switch (CharTransform)
+                    {
+                        case CharControllerTransform.HeadPivot:
+                            TransformObject = CharController.HeadPivot.transform;
+                            break;
+                        default:
+                            TransformObject = CharController.transform;
+                            break;
+                    }
 
-                default:
-                    TransformObject = null;
-                    LocalPlayerController = null;
-                    MelonLogger.Error("No PlayerGame scene!");
-                    return false;
+                    return true;
+
+                }
             }
 
-            return true;
+            TransformObject = null;
+            LocalPlayerController = null;
+            MelonLogger.Error("No Player in the game!");
+            return false;
         }
 
         public static void OnUpdate()
@@ -118,6 +133,8 @@ namespace LiarMod.Player
             }
 
             LiarMenu.freePlayerPosToggle = freepos;
+
+            
         }
 
         internal static void OnSceneWasInitialized(int buildindex, string sceneName)
@@ -133,6 +150,7 @@ namespace LiarMod.Player
         public static PlayerObjectController LocalPlayerController;
         public static CharController CharController;
         public static Transform TransformObject;
+        public static CharControllerTransform CharTransform;
 
         private static bool _ShowHeadMeshes = false;
         private static bool using_freepos = false;

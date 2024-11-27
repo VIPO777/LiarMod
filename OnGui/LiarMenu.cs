@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Unity.VisualScripting;
 using UnityEngine;
 
 using static LiarMod.OnGui.GUIMenu;
@@ -101,39 +102,44 @@ namespace LiarMod.OnGui
                 switch (net.Mode)
                 {
                     case CustomNetworkManager.GameMode.LiarsDeck:
+                    case CustomNetworkManager.GameMode.LiarsChaos:
                         NewToggleButton("FreeCountDown", ref FreeCountDown);
                         NewToggleButton("FreeTurn", ref FreeLiarsDeckTurn);
-                        NewToggleButton("FreeThrowCard", ref FreeThrowCard);
 #if DEBUG
-                        NewToggleButton("ShowLiarsDeckCards [Don't fucking use]", ref ShowLiarsDeckCards);
-
-                        if (Manager.Instance.GameStarted && ShowLiarsDeckCards)
+                        if (net.Mode == CustomNetworkManager.GameMode.LiarsDeck)
                         {
-                            PlayerStats pStats2 = Manager.Instance.GetLocalPlayer();
+                            NewToggleButton("FreeThrowCard", ref FreeThrowCard);
 
-                            if (GUILayout.Button("Set all cards as <color=red>Kings</color>", GUIMenu.Button2))
-                            {
-                                PlayerCards.EditCards(pStats2, 1);
-                            }
+                            NewToggleButton("ShowLiarsDeckCards [Don't fucking use]", ref ShowLiarsDeckCards);
 
-                            if (GUILayout.Button("Set all cards as <color=purple>Queens</color>", GUIMenu.Button2))
+                            if (Manager.Instance.GameStarted && ShowLiarsDeckCards)
                             {
-                                PlayerCards.EditCards(pStats2, 2);
-                            }
+                                PlayerStats pStats2 = Manager.Instance.GetLocalPlayer();
 
-                            if (GUILayout.Button("Set all cards as <color=orange>Aces</color>", GUIMenu.Button2))
-                            {
-                                PlayerCards.EditCards(pStats2, 3);
-                            }
+                                if (GUILayout.Button("Set all cards as <color=red>Kings</color>", GUIMenu.Button2))
+                                {
+                                    PlayerCards.EditCards(pStats2, 1);
+                                }
 
-                            if (GUILayout.Button("Set all cards as Jokers", GUIMenu.Button2))
-                            {
-                                PlayerCards.EditCards(pStats2, 4);
-                            }
+                                if (GUILayout.Button("Set all cards as <color=purple>Queens</color>", GUIMenu.Button2))
+                                {
+                                    PlayerCards.EditCards(pStats2, 2);
+                                }
 
-                            if (GUILayout.Button("Set all cards as <color=red>Devil</color>", GUIMenu.Button2))
-                            {
-                                PlayerCards.EditCards(pStats2, -1);
+                                if (GUILayout.Button("Set all cards as <color=orange>Aces</color>", GUIMenu.Button2))
+                                {
+                                    PlayerCards.EditCards(pStats2, 3);
+                                }
+
+                                if (GUILayout.Button("Set all cards as Jokers", GUIMenu.Button2))
+                                {
+                                    PlayerCards.EditCards(pStats2, 4);
+                                }
+
+                                if (GUILayout.Button("Set all cards as <color=red>Devil</color>", GUIMenu.Button2))
+                                {
+                                    PlayerCards.EditCards(pStats2, -1);
+                                }
                             }
                         }
 #endif
@@ -187,6 +193,7 @@ namespace LiarMod.OnGui
             GUILayout.Label(" " + FreePosScale.ToString("0.00") + " ", GUIMenu.Label2, GUILayout.Width(50));
             GUILayout.EndHorizontal();
 
+            ToggleCharTransform();
 
             NewToggleButton("CustomLocalPlayerSize [HOST ONLY]", ref LocalPlayerSize);
             if (LocalPlayerSize)
@@ -459,6 +466,38 @@ namespace LiarMod.OnGui
         {
             ExploreGameObject = null;
             SelectedExploreGameObject = null;
+        }
+
+        public static void ToggleCharTransform()
+        {
+            GUILayout.BeginHorizontal();
+            try
+            {
+                GUILayout.Label("CharTransform", GUIMenu.Label3, GUILayout.Width(GUIMenu.MainWindowRect.width * .4f));
+
+                if (GUILayout.Button($"{PlayerObject.CharTransform.ToString()}", GUIMenu.Button))
+                {
+                    PlayerObject.CharTransform = (PlayerObject.CharControllerTransform)(((int)PlayerObject.CharTransform + 1) % Enum.GetValues(typeof(PlayerObject.CharControllerTransform)).Length);
+                }
+
+                if (GUILayout.Button("EX", GUIMenu.Button, GUILayout.Width(42)))
+                {
+                    if(PlayerObject.TransformObject != null)
+                    {
+                        ExploreGameObject = PlayerObject.TransformObject;
+                        MelonLogger.Msg("CharTransform explore is set: " + ExploreGameObject.ToString());
+                    } else
+                    {
+                        MelonLogger.Error("PlayerObject.TransformObject is null!");
+
+                    }
+                }
+
+            }
+            finally
+            {
+                GUILayout.EndHorizontal();
+            }
         }
 
         public static bool BitchesGuiToggle = true;

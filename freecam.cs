@@ -1,5 +1,6 @@
 ﻿using LiarMod.Player;
 using MelonLoader;
+using Mirror;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -69,16 +70,19 @@ namespace LiarMod.freecam
 
         public static void OnSceneWasUnloaded(int buildIndex, string sceneName)
         {
-            if (sceneName == "Game")
-            {
-                disable_freecam();
-            }
+            disable_freecam();
         }
 
         public static void OnUpdate()
         {
-            if (SceneManager.GetActiveScene().name == "Game")
+            CustomNetworkManager net = NetworkManager.singleton as CustomNetworkManager;
+
+
+            if (Manager.Instance != null)
             {
+                if (!Manager.Instance.GameStarted)
+                    return;
+
                 if (Input.GetKeyDown(KeyCode.F5))
                 {
                     if (!using_freecam)
